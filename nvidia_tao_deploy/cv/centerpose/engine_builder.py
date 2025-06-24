@@ -77,7 +77,9 @@ class CenterPoseEngineBuilder(EngineBuilder):
             self._input_dims = self._input_dims[1:]
 
             network_flags = 1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)
-            network_flags = network_flags | (1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_PRECISION))
+
+            if hasattr(trt.NetworkDefinitionCreationFlag, "EXPLICIT_PRECISION"):
+                network_flags |= 1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_PRECISION)
 
             self.network = self.builder.create_network(network_flags)
             self.parser = trt.OnnxParser(self.network, self.trt_logger)
@@ -170,10 +172,13 @@ class CenterPoseEngineBuilder(EngineBuilder):
                                     calib_data_file=calib_data_file)
 
         self._logger_info_IBuilderConfig()
-        with self.builder.build_engine(self.network, self.config) as engine, \
-                open(engine_path, "wb") as f:
+        serialized_engine = self.builder.build_serialized_network(self.network, self.config)
+   
+        with open(engine_path, "wb") as f:
             logger.debug("Serializing engine to file: %s", engine_path)
-            f.write(engine.serialize())
+            f.write(serialized_engine)
+
+        logger.info("Engine build and save completed successfully.")
 
     def set_calibrator(self,
                        inputs=None,

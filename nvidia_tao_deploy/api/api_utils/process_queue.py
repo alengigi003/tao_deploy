@@ -4,7 +4,7 @@ import time
 import traceback
 import yaml
 from nvidia_tao_deploy.api.api_utils import module_utils
-from nvidia_tao_core.cloud_handlers.utils import download_files_from_spec, get_results_cloud_data, monitor_and_upload
+#from nvidia_tao_core.cloud_handlers.utils import download_files_from_spec, get_results_cloud_data, monitor_and_upload
 from nvidia_tao_deploy.cv.common.entrypoint.entrypoint_hydra import launch
 from nvidia_tao_deploy.cv.common.logging import status_logging
 
@@ -45,35 +45,35 @@ def process_queue():
                 os.environ["JOB_ID"] = job["job_id"]
 
                 # Obtaining the CloudStroage instance to save the results
-                cloud_storage, specs = get_results_cloud_data(job["data"].get("cloud_metadata"), job["data"]["specs"], f'/results/{job["job_id"]}')
+                #cloud_storage, specs = get_results_cloud_data(job["data"].get("cloud_metadata"), job["data"]["specs"], f'/results/{job["job_id"]}')
 
                 # Creating the job directory
-                os.makedirs(specs["results_dir"], exist_ok=True)
+                #os.makedirs(specs["results_dir"], exist_ok=True)
 
-                download_files_from_spec(cloud_data=job["data"].get("cloud_metadata"),
+                """ download_files_from_spec(cloud_data=job["data"].get("cloud_metadata"),
                                          data=specs,
                                          job_id=job["job_id"],
                                          network_arch=job["neural_network_name"],
                                          ngc_api_key=job["data"].get("ngc_api_key"),
                                          tao_api_ui_cookie=tao_api_ui_cookie,
                                          use_ngc_staging=use_ngc_staging,
-                                         )
+                                         ) """
                 
                 # Creating the Spec
-                with open(f'{specs["results_dir"]}/spec.yaml', 'w+') as yaml_file:
-                    yaml.dump(specs, yaml_file, default_flow_style=False)
+                #with open(f'{specs["results_dir"]}/spec.yaml', 'w+') as yaml_file:
+                    #yaml.dump(specs, yaml_file, default_flow_style=False)
 
                 # Starting the thread to update the results to the cloud
-                if cloud_storage:
+                """ if cloud_storage:
                     exit_event = threading.Event()
                     upload_thread = threading.Thread(target=monitor_and_upload, args=(specs["results_dir"], cloud_storage, exit_event), daemon=True)
                     upload_thread.start()
-
+                    """
                 # Creating the request object and launching the action
                 args = {
                     "subtask": job["action"], 
-                    "experiment_spec_file": f'{specs["results_dir"]}/spec.yaml',
-                    "results_dir": specs["results_dir"],
+                    #"experiment_spec_file": f'{specs["results_dir"]}/spec.yaml',
+                    #"results_dir": specs["results_dir"],
                 }
 
                 _, actions = module_utils.get_neural_network_actions(job["neural_network_name"])

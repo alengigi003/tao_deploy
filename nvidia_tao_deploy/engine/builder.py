@@ -82,7 +82,7 @@ class EngineBuilder(ABC):
 
         self.builder = trt.Builder(self.trt_logger)
         self.config = self.builder.create_builder_config()
-        self.config.max_workspace_size = workspace * (2 ** 30)
+        self.config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, workspace * (2 ** 30))
 
         self.batch_size = batch_size
         self.max_batch_size, self.opt_batch_size, self.min_batch_size = max_batch_size, opt_batch_size, min_batch_size
@@ -169,8 +169,9 @@ class EngineBuilder(ABC):
                 logger.info('  BuilderFlag.DEBUG')
             if self.config.get_flag(trt.BuilderFlag.GPU_FALLBACK):
                 logger.info('  BuilderFlag.GPU_FALLBACK')
-            if self.config.get_flag(trt.BuilderFlag.STRICT_TYPES):
-                logger.info('  BuilderFlag.STRICT_TYPES')
+            if hasattr(trt.BuilderFlag, "STRICT_TYPES"):
+                if self.config.get_flag(trt.BuilderFlag.STRICT_TYPES):
+                    logger.info('  BuilderFlag.STRICT_TYPES')
             if self.config.get_flag(trt.BuilderFlag.REFIT):
                 logger.info('  BuilderFlag.REFIT')
             if self.config.get_flag(trt.BuilderFlag.DISABLE_TIMING_CACHE):
@@ -189,8 +190,9 @@ class EngineBuilder(ABC):
                 logger.info('  BuilderFlag.DIRECT_IO')
             if self.config.get_flag(trt.BuilderFlag.REJECT_EMPTY_ALGORITHMS):
                 logger.info('  BuilderFlag.REJECT_EMPTY_ALGORITHMS')
-            if self.config.get_flag(trt.BuilderFlag.ENABLE_TACTIC_HEURISTIC):
-                logger.info('  BuilderFlag.ENABLE_TACTIC_HEURISTIC')
+            if hasattr(trt.BuilderFlag, "ENABLE_TACTIC_HEURISTIC"):
+                if self.config.get_flag(trt.BuilderFlag.ENABLE_TACTIC_HEURISTIC):
+                    logger.info('  BuilderFlag.ENABLE_TACTIC_HEURISTIC')
 
             logger.info(' ')
             # Return int32 and thus cannot represent >2GB
@@ -205,10 +207,12 @@ class EngineBuilder(ABC):
             logger.info('  MemoryPoolType.DLA_GLOBAL_DRAM = %d bytes', pool_limit)
 
             logger.info(' ')
-            if self.config.get_preview_feature(trt.PreviewFeature.FASTER_DYNAMIC_SHAPES_0805):
-                logger.info('  PreviewFeature.FASTER_DYNAMIC_SHAPES_0805')
-            if self.config.get_preview_feature(trt.PreviewFeature.DISABLE_EXTERNAL_TACTIC_SOURCES_FOR_CORE_0805):
-                logger.info('  PreviewFeature.DISABLE_EXTERNAL_TACTIC_SOURCES_FOR_CORE_0805')
+            if hasattr(trt.PreviewFeature, "FASTER_DYNAMIC_SHAPES_0805"):
+                if self.config.get_preview_feature(trt.PreviewFeature.FASTER_DYNAMIC_SHAPES_0805):
+                    logger.info('  PreviewFeature.FASTER_DYNAMIC_SHAPES_0805')
+            if hasattr(trt.PreviewFeature, "DISABLE_EXTERNAL_TACTIC_SOURCES_FOR_CORE_0805"):
+                if self.config.get_preview_feature(trt.PreviewFeature.DISABLE_EXTERNAL_TACTIC_SOURCES_FOR_CORE_0805):
+                    logger.info('  PreviewFeature.DISABLE_EXTERNAL_TACTIC_SOURCES_FOR_CORE_0805')
             if self.config.get_quantization_flag(trt.QuantizationFlag.CALIBRATE_BEFORE_FUSION):
                 logger.info('  QuantizationFlag.CALIBRATE_BEFORE_FUSION')
             tactic_sources = self.config.get_tactic_sources()

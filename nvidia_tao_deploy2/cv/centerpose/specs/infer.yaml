@@ -1,14 +1,14 @@
 encryption_key: "???"
-results_dir: "/tao_deploy/nvidia_tao_deploy/cv/centerpose/res/"
+results_dir: "../res/"
 
 dataset:
-  inference_data: "/val/"
+  inference_data: "../val/"
   num_classes: 1
   batch_size: 1
   workers: 4
 
 inference:
-  trt_engine: "/centerpose.engine"
+  trt_engine: "../models/centerpose.engine"
   visualization_threshold: 0.3
   principle_point_x: 298.3225504557292
   principle_point_y: 392.1635182698568

@@ -1,9 +1,0 @@
-results_dir: "???"
-inference:
-  trt_engine: "???"
-  batch_size: 8
-dataset:
-  data:
-    test:
-      data_prefix: "???"
-      classes: "???"

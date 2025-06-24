@@ -26,7 +26,7 @@ from time import time
 import pycuda.driver as cuda
 
 from nvidia_tao_deploy.cv.common.telemetry.nvml_utils import get_device_details
-from nvidia_tao_core.telemetry.telemetry import send_telemetry_data
+#from nvidia_tao_core.telemetry.telemetry import send_telemetry_data
 
 RELEASE = True
 # Configure the logger.
@@ -266,14 +266,14 @@ def launch_job(package, package_name, cl_args=None):
         for device in get_device_details():
             gpu_data.append(device.get_config())
         logger.info("Sending telemetry data.")
-        send_telemetry_data(
+        """ send_telemetry_data(
             package_name,
             task,
             gpu_data,
             num_gpus=1,
             time_lapsed=time_lapsed,
             pass_status=process_passed
-        )
+        ) """
     except Exception as e:
         logger.warning("Telemetry data couldn't be sent, but the command ran successfully.")
         logger.warning("[Error]: {}".format(e))  # noqa pylint: disable=C0209
